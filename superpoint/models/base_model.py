@@ -355,6 +355,12 @@ class BaseModel(metaclass=ABCMeta):
                 pred = pred[0]
         return pred
 
+    #copy this part to communicate with ros
+    #dataset -> input image
+    #ros callback 함수 안에 넣어주면 됨.
+    # while 빼고 한번 만 predict 하게
+    
+    #일단 원래 코드를 돌려보고.
     def evaluate(self, dataset, max_iterations=None, mute=False):
         assert dataset in self.datasets
         self.sess.run(self.dataset_iterators[dataset].initializer)
@@ -394,7 +400,7 @@ class BaseModel(metaclass=ABCMeta):
             checkpoint_path = tf.train.latest_checkpoint(checkpoint_path)
             if checkpoint_path is None:
                 raise ValueError('Checkpoint directory is empty.')
-        saver.restore(self.sess, checkpoint_path)
+        saver.restore(self.sess, checkpoint_path) # load trained weight
 
     def save(self, checkpoint_path):
         step = self.sess.run(self.global_step)
