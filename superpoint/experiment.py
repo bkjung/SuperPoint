@@ -3,6 +3,7 @@ import yaml
 import os
 import argparse
 import numpy as np
+import codecs
 from contextlib import contextmanager
 from json import dumps as pprint
 
@@ -61,7 +62,8 @@ def get_num_gpus():
 
 @contextmanager
 def _init_graph(config, with_dataset=False):
-    set_seed(config.get('seed', int.from_bytes(os.urandom(4), byteorder='big')))
+    # set_seed(config.get('seed', int.from_bytes(os.urandom(4), byteorder='big')))
+    set_seed(config.get('seed', int(codecs.encode(os.urandom(4), 'hex'), 16)))
     n_gpus = get_num_gpus()
     logging.info('Number of GPUs detected: {}'.format(n_gpus))
 
@@ -81,7 +83,7 @@ def _init_graph(config, with_dataset=False):
 def _cli_train(config, output_dir, args):
     assert 'train_iter' in config
 
-    with open(os.path.join(output_dir, 'config.yml'), 'w') as f:
+    with open(os.path.join(output_dir, 'config.yaml'), 'w+') as f:
         yaml.dump(config, f, default_flow_style=False)
     train(config, config['train_iter'], output_dir)
 
@@ -91,7 +93,7 @@ def _cli_train(config, output_dir, args):
 
 def _cli_eval(config, output_dir, args):
     # Load model config from previous experiment
-    with open(os.path.join(output_dir, 'config.yml'), 'r') as f:
+    with open(os.path.join(output_dir, 'config.yaml'), 'r') as f:
         model_config = yaml.load(f)['model']
     model_config.update(config.get('model', {}))
     config['model'] = model_config

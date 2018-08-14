@@ -37,6 +37,8 @@ if __name__ == '__main__':
 
     with experiment._init_graph(config, with_dataset=True) as (net, dataset):
         if net.trainable:
+            print(net)
+            print("debug-1234")
             net.load(str(checkpoint))
         test_set = dataset.get_test_set()
 

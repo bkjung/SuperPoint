@@ -1,10 +1,13 @@
 from abc import ABCMeta, abstractmethod
+import six
 import tensorflow as tf
 
 from superpoint.utils.tools import dict_update
 
 
-class BaseDataset(metaclass=ABCMeta):
+@six.add_metaclass(ABCMeta)
+# class BaseDataset(metaclass=ABCMeta):
+class BaseDataset():
     """Base model class.
 
     Arguments:

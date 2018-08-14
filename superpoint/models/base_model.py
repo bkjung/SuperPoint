@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import six
 import tensorflow as tf
 from tensorflow.python.client import timeline
 import numpy as np
@@ -8,6 +9,11 @@ import itertools
 
 from superpoint.utils.tools import dict_update
 
+from tensorflow.core.framework import graph_pb2
+from tensorflow.core.protobuf import meta_graph_pb2
+
+from google.protobuf import text_format
+
 
 class Mode:
     TRAIN = 'train'
@@ -15,7 +21,9 @@ class Mode:
     PRED = 'pred'
 
 
-class BaseModel(metaclass=ABCMeta):
+@six.add_metaclass(ABCMeta)
+# class BaseModel(metaclass=ABCMeta):
+class BaseModel():
     """Base model class.
 
     Arguments:
@@ -394,13 +402,39 @@ class BaseModel(metaclass=ABCMeta):
         return metrics
 
     def load(self, checkpoint_path):
+        print("PATH111111 "+ str(checkpoint_path))
         with tf.device('/cpu:0'):
             saver = tf.train.Saver(save_relative_paths=True)
-        if tf.gfile.IsDirectory(checkpoint_path):
-            checkpoint_path = tf.train.latest_checkpoint(checkpoint_path)
-            if checkpoint_path is None:
-                raise ValueError('Checkpoint directory is empty.')
-        saver.restore(self.sess, checkpoint_path) # load trained weight
+        print("debug1")
+        # if tf.gfile.IsDirectory(checkpoint_path):
+        #     print("debug2")
+        #     checkpoint_path = tf.train.latest_checkpoint(checkpoint_path)
+        #     print("PATH222222 "+ str(checkpoint_path))
+        #     # checkpoint_path = "/home/bkjung/Projects/SuperPoint/superpoint/saved_models/"
+        #     if checkpoint_path is None:
+        #         raise ValueError('Checkpoint directory is empty.')
+        # print("debug3")
+        # saver = tf.train.Saver(write_version=saver_pb2.SaverDef.V2)
+        # ckpt = tf.train.get_checkpoint_state(checkpoint_path)
+        # print("ckpt:", ckpt)
+        # if ckpt and ckpt.model_checkpoint_path:
+        #     saver.restore(self.sess, ckpt.model_checkpoint_path)
+        #     # saver.restore(self.sess, checkpoint_path) # load trained weight
+        # print("debug4")
+        # print("done")
+        # with tf.gfile.FastGFile(checkpoint_path, 'rb') as f:
+        #     graph_def = tf.GraphDef()
+        #     garph_def.ParseFromString(f.read())
+        #     g_in = tf.import_graph_def(graph_def)
+
+        graph_path = "/home/bkjung/Projects/SuperPoint/superpoint/saved_models/magic-point_17-06-2018"
+        # graph_str = "node { name: 'w1' op: 'params' }"
+        # with open(graph_path, "rb") as f:
+        #     proto_b = f.read()
+        #     graph_def = tf.GraphDef()
+        #     text_format.Merge(proto_b, graph_def)
+        tf.saved_model.loader.load(self.sess, [tf.saved_model.tag_constants.SERVING], graph_path)
+        
 
     def save(self, checkpoint_path):
         step = self.sess.run(self.global_step)

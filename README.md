@@ -1,3 +1,22 @@
+# bkjung added
+python 3 required (python2 has error on pipeline.py:37)
+
+Install CUDA-9.0 (https://medium.com/@zhanwenchen/install-cuda-and-cudnn-for-tensorflow-gpu-on-ubuntu-79306e4ac04e)
+
+echo 'alias pip3.6="python3.6 -m pip"' >> ~/.bashrc
+source ~/.bashrc
+
+pip3.6 install numpy --user
+pip3.6 install pathlib --user
+pip3.6 install tqdm --user
+pip3.6 uninstall protobuf --yes
+pip3.6 install tensorflow --user
+sudo apt-get install python-apt
+
+echo 'export CUDA_VISIBLE_DEVICES=1' >> ~/.bashrc
+source ~/.bashrc
+
+
 # SuperPoint
 
 This is a Tensorflow implementation of  "SuperPoint: Self-Supervised Interest Point Detection and Description." Daniel DeTone, Tomasz Malisiewicz, Andrew Rabinovich. [ArXiv 2018](https://arxiv.org/abs/1712.07629).
